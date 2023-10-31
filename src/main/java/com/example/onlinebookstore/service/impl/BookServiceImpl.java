@@ -8,7 +8,6 @@ import com.example.onlinebookstore.model.Book;
 import com.example.onlinebookstore.repository.BookRepository;
 import com.example.onlinebookstore.service.BookService;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,27 +48,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto update(Long id, BookDto bookDto) {
-        Optional<Book> bookOptional = bookRepository.findById(id);
-        if (bookOptional.isPresent()) {
-            Book book = bookOptional.get();
-            if (bookDto.getTitle() != null) {
-                book.setTitle(bookDto.getTitle());
-            }
-            if (bookDto.getIsbn() != null) {
-                book.setIsbn(bookDto.getIsbn());
-            }
-            if (bookDto.getPrice() != null) {
-                book.setPrice(bookDto.getPrice());
-            }
-            if (bookDto.getDescription() != null) {
-                book.setDescription(bookDto.getDescription());
-            }
-            if (bookDto.getCoverImage() != null) {
-                book.setCoverImage(bookDto.getCoverImage());
-            }
-            return bookMapper.toDto(bookRepository.save(book));
+    public BookDto update(Long id, CreateBookRequestDto bookDto) {
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("No book was found with id " + id);
         }
-        throw new EntityNotFoundException("No book was found with id " + id);
+        Book book = bookMapper.toModel(bookDto);
+        book.setId(id);
+        return bookMapper.toDto(bookRepository.save(book));
     }
 }
