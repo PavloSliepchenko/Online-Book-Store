@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
     private static final String ISBN = "isbn";
-    private static final String PRICE = "price";
     private static final String TITLE = "title";
     private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
 
@@ -27,14 +26,6 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
                     .getSpecificationProvider(TITLE)
                     .getSpecification(searchParameters.titles());
             specification = Specification.where(titlesSpecification);
-        }
-        if (searchParameters.prices() != null && searchParameters.prices().length > 0) {
-            Specification<Book> pricesSpecification = bookSpecificationProviderManager
-                    .getSpecificationProvider(PRICE)
-                    .getSpecification(searchParameters.prices());
-            specification = specification == null
-                    ? Specification.where(pricesSpecification)
-                    : specification.and(pricesSpecification);
         }
         if (searchParameters.isbns() != null && searchParameters.isbns().length > 0) {
             Specification<Book> isbnsSpecification = bookSpecificationProviderManager
