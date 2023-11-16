@@ -1,6 +1,6 @@
 package com.example.onlinebookstore.repository;
 
-import com.example.onlinebookstore.dto.BookSearchParametersDto;
+import com.example.onlinebookstore.dto.bookdtos.BookSearchParametersDto;
 import com.example.onlinebookstore.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;

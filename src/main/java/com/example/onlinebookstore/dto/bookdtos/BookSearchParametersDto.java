@@ -1,4 +1,4 @@
-package com.example.onlinebookstore.dto;
+package com.example.onlinebookstore.dto.bookdtos;
 
 public record BookSearchParametersDto(String[] titles, String[] isbns) {
 }
