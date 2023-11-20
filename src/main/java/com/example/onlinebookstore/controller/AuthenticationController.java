@@ -1,7 +1,7 @@
 package com.example.onlinebookstore.controller;
 
-import com.example.onlinebookstore.dto.userdtos.UserDto;
-import com.example.onlinebookstore.dto.userdtos.UserRegistrationRequestDto;
+import com.example.onlinebookstore.dto.user.UserDto;
+import com.example.onlinebookstore.dto.user.UserRegistrationRequestDto;
 import com.example.onlinebookstore.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
