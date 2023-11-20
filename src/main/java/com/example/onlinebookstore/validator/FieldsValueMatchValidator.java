@@ -2,6 +2,7 @@ package com.example.onlinebookstore.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import java.util.Objects;
 import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldsValueMatchValidator
@@ -22,10 +23,6 @@ public class FieldsValueMatchValidator
         Object fieldMatchValue = new BeanWrapperImpl(value)
                 .getPropertyValue(fieldMatch);
 
-        if (fieldValue != null) {
-            return fieldValue.equals(fieldMatchValue);
-        } else {
-            return fieldMatchValue == null;
-        }
+        return Objects.equals(fieldValue, fieldMatchValue);
     }
 }
