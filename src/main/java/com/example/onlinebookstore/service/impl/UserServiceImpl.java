@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -21,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private Set<Role> userRole;
 
     @Override
     public UserDto save(UserRegistrationRequestDto registrationRequestDto) {
@@ -30,9 +34,20 @@ public class UserServiceImpl implements UserService {
                     + " already exists");
         }
 
+        if (userRole == null) {
+            userRole = initDefaultRole();
+        }
+
         User user = userMapper.toModel(registrationRequestDto);
         user.setPassword(passwordEncoder.encode(registrationRequestDto.getPassword()));
-        user.setRoles(roleRepository.findAllByName(DEFAULT_ROLE));
+        user.setRoles(userRole);
         return userMapper.toDto(userRepository.save(user));
+    }
+
+    private Set<Role> initDefaultRole() {
+        Role role = roleRepository.findByName(DEFAULT_ROLE);
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(role);
+        return roleSet;
     }
 }
