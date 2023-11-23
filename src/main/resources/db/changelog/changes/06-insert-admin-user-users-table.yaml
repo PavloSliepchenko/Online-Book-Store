@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-admin-user
+      author: PavloSliepchenko
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "pavlo@ua.com"
+              - column:
+                  name: password
+                  value: "$2a$10$31UQHFaHjd/pYeBiHzFmbeXUGXUTFpt2jRISc9mcR580vUPDzRrDi"
+              - column:
+                  name: first_name
+                  value: "Pavlo"
+              - column:
+                  name: last_name
+                  value: "Sliepchenko"
