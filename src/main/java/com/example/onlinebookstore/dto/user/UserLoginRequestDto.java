@@ -1,17 +1,14 @@
 package com.example.onlinebookstore.dto.user;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
 public record UserLoginRequestDto(
-        @NotEmpty
-        @NotNull
+        @NotBlank
         @Email
         String email,
-        @NotNull
-        @NotEmpty
+        @NotBlank
         @Length(min = 5, max = 15)
         String password
 ) {
