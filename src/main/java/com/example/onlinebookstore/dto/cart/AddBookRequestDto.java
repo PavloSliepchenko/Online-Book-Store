@@ -1,6 +1,5 @@
 package com.example.onlinebookstore.dto.cart;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
