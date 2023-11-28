@@ -14,6 +14,7 @@ import com.example.onlinebookstore.repository.CartItemRepository;
 import com.example.onlinebookstore.repository.OrderItemRepository;
 import com.example.onlinebookstore.repository.OrderRepository;
 import com.example.onlinebookstore.repository.ShoppingCartRepository;
+import com.example.onlinebookstore.repository.UserRepository;
 import com.example.onlinebookstore.service.OrderService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,18 +32,20 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private final OrderMapper orderMapper;
 
     @Override
-    public OrderResponseDto placeOrder(User user, OrderRequestDto requestDto) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUser(user).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find a shopping cart of the user "
-                        + user.getEmail()
+    public OrderResponseDto placeOrder(Long userId, OrderRequestDto requestDto) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException("Cannot find a shopping cart of the user id "
+                        + userId
                 ));
+        Optional<User> user = userRepository.findById(userId);
 
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
-        order.setUser(user);
+        order.setUser(user.get());
         order.setShippingAddress(requestDto.getShippingAddress());
         order.setStatus(Order.Status.PENDING);
         Order orderFromDb = orderRepository.save(order);
@@ -66,8 +69,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponseDto> getAllOrders(User user) {
-        List<Order> allOrders = orderRepository.findAllByUser(user);
+    public List<OrderResponseDto> getAllOrders(Long userId) {
+        List<Order> allOrders = orderRepository.findAllByUserId(userId);
         return allOrders.stream()
                 .map(orderMapper::toDto)
                 .toList();

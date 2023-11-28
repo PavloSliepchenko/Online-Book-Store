@@ -35,7 +35,7 @@ public class OrderController {
     public OrderResponseDto placeOrder(Authentication authentication,
                                        @RequestBody OrderRequestDto requestDto) {
         User user = (User) authentication.getPrincipal();
-        return orderService.placeOrder(user, requestDto);
+        return orderService.placeOrder(user.getId(), requestDto);
     }
 
     @GetMapping
@@ -43,7 +43,7 @@ public class OrderController {
     @Operation(summary = "View orders", description = "Retrieves user's order history")
     List<OrderResponseDto> getAllOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return orderService.getAllOrders(user);
+        return orderService.getAllOrders(user.getId());
     }
 
     @PatchMapping(value = "/{id}")
@@ -60,7 +60,7 @@ public class OrderController {
             description = "Retrieves all order items for a specific order")
     List<OrderItemDto> getAllOrderItems(Authentication authentication, @PathVariable Long orderId) {
         User user = (User) authentication.getPrincipal();
-        return orderItemService.getAllOrderItems(user, orderId);
+        return orderItemService.getAllOrderItems(user.getId(), orderId);
     }
 
     @GetMapping(value = "/{orderId}/items/{itemId}")
@@ -71,6 +71,6 @@ public class OrderController {
                                        @PathVariable Long orderId,
                                        @PathVariable Long itemId) {
         User user = (User) authentication.getPrincipal();
-        return orderItemService.getOrderItemFromOrder(user, orderId, itemId);
+        return orderItemService.getOrderItemFromOrder(user.getId(), orderId, itemId);
     }
 }
