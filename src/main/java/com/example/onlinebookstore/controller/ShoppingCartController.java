@@ -33,7 +33,7 @@ public class ShoppingCartController {
     @Operation(summary = "Get a cart", description = "Provides user's cart content")
     public CartResponseDto getCart(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.getShoppingCart(user);
+        return shoppingCartService.getShoppingCart(user.getId());
     }
 
     @PostMapping
@@ -42,7 +42,7 @@ public class ShoppingCartController {
     public CartResponseDto addBook(@RequestBody @Valid AddBookRequestDto addBookRequestDto,
                                    Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.addBook(user, addBookRequestDto);
+        return shoppingCartService.addBook(user.getId(), addBookRequestDto);
     }
 
     @PutMapping(value = "/cart-items/{id}")
@@ -54,7 +54,7 @@ public class ShoppingCartController {
             Authentication authentication
     ) {
         User user = (User) authentication.getPrincipal();
-        return shoppingCartService.updateCartItem(user, id, updateDto);
+        return shoppingCartService.updateCartItem(user.getId(), id, updateDto);
     }
 
     @DeleteMapping(value = "/cart-items/{id}")
@@ -63,6 +63,6 @@ public class ShoppingCartController {
             description = "Removes an order by id using a soft delete")
     public void deleteOrder(Authentication authentication, @PathVariable Long id) {
         User user = (User) authentication.getPrincipal();
-        shoppingCartService.deleteOrder(user, id);
+        shoppingCartService.deleteOrder(user.getId(), id);
     }
 }
