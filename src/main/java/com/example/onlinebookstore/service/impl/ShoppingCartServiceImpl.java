@@ -10,7 +10,6 @@ import com.example.onlinebookstore.mapper.CartMapper;
 import com.example.onlinebookstore.model.Book;
 import com.example.onlinebookstore.model.CartItem;
 import com.example.onlinebookstore.model.ShoppingCart;
-import com.example.onlinebookstore.model.User;
 import com.example.onlinebookstore.repository.BookRepository;
 import com.example.onlinebookstore.repository.CartItemRepository;
 import com.example.onlinebookstore.repository.ShoppingCartRepository;
@@ -29,13 +28,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartMapper cartMapper;
 
     @Override
-    public CartResponseDto getShoppingCart(User user) {
-        return cartMapper.toDto(getShoppingCartByUser(user));
+    public CartResponseDto getShoppingCart(Long userId) {
+        return cartMapper.toDto(getShoppingCartByUserId(userId));
     }
 
     @Override
-    public CartResponseDto addBook(User user, AddBookRequestDto addBookRequestDto) {
-        ShoppingCart shoppingCart = getShoppingCartByUser(user);
+    public CartResponseDto addBook(Long userId, AddBookRequestDto addBookRequestDto) {
+        ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
 
         Book book = bookRepository.findById(addBookRequestDto.getBookId())
                 .orElseThrow(() ->
@@ -54,8 +53,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public CartItemDto updateCartItem(User user, Long id, UpdateQuantityRequestDto updateDto) {
-        ShoppingCart shoppingCart = getShoppingCartByUser(user);
+    public CartItemDto updateCartItem(Long userId, Long id, UpdateQuantityRequestDto updateDto) {
+        ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
         Optional<CartItem> presentItem = getCartItemById(shoppingCart, id);
         if (presentItem.isEmpty()) {
             throw new RuntimeException("You don't have an order with id " + id);
@@ -66,8 +65,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void deleteOrder(User user, Long id) {
-        ShoppingCart shoppingCart = getShoppingCartByUser(user);
+    public void deleteOrder(Long userId, Long id) {
+        ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
         Optional<CartItem> presentItem = getCartItemById(shoppingCart, id);
         if (presentItem.isEmpty()) {
             throw new RuntimeException("You don't have an order with id " + id);
@@ -75,10 +74,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         cartItemRepository.deleteById(id);
     }
 
-    private ShoppingCart getShoppingCartByUser(User user) {
-        return cartRepository.findByUser(user).orElseThrow(
-                () -> new EntityNotFoundException("Cannot find a shopping cart of the user "
-                        + user.getEmail()
+    private ShoppingCart getShoppingCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId).orElseThrow(
+                () -> new EntityNotFoundException("Cannot find a shopping cart of the user id "
+                        + userId
                 ));
     }
 
