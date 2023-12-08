@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,6 +32,7 @@ public class CategoryController {
     private final BookService bookService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Add a category", description = "Saves a new category to DB")
     public CategoryResponseDto createCategory(
@@ -45,7 +48,7 @@ public class CategoryController {
     @Operation(summary = "Find all categories",
             description = "Categories will be provided by pages")
     public List<CategoryResponseDto> getAll(Pageable pageable) {
-        return categoryService.findAll();
+        return categoryService.findAll(pageable);
     }
 
     @GetMapping(value = "/{id}")
@@ -57,6 +60,7 @@ public class CategoryController {
     }
 
     @PutMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Update category", description = "Updates a category in the DB")
     public CategoryResponseDto updateCategory(
