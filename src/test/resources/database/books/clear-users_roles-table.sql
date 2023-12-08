@@ -1,0 +1,1 @@
+delete from users_roles where user_id between 2 and 4;
