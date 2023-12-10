@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
@@ -54,19 +55,13 @@ class CategoryControllerTest {
     public void createCategory_ValidRequest_ShouldReturnCategoryResponseDto() throws Exception {
         CreateCategoryRequestDto requestDto = getRequestDto();
         String requestJson = objectMapper.writeValueAsString(requestDto);
-        MvcResult result = mockMvc.perform(post("/api/categories")
+        mockMvc.perform(post("/api/categories")
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andReturn();
-
-        CategoryResponseDto actual =
-                objectMapper.readValue(result.getResponse().getContentAsString(),
-                        CategoryResponseDto.class);
-
-        Assertions.assertEquals(3L, actual.getId());
-        Assertions.assertEquals(requestDto.getName(), actual.getName());
-        Assertions.assertEquals(requestDto.getDescription(), actual.getDescription());
+                .andExpect(jsonPath("$.id").value(3L))
+                .andExpect(jsonPath("$.name").value(requestDto.getName()))
+                .andExpect(jsonPath("$.description").value(requestDto.getDescription()));
     }
 
     @Test
@@ -101,16 +96,10 @@ class CategoryControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getCategoryById_ValidRequest_ShouldReturnCorrectCategory() throws Exception {
         Long categoryId = 2L;
-        MvcResult result = mockMvc.perform(get("/api/categories/" + categoryId))
+        mockMvc.perform(get("/api/categories/" + categoryId))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        CategoryResponseDto responseDto =
-                objectMapper.readValue(result.getResponse().getContentAsString(),
-                        CategoryResponseDto.class);
-
-        Assertions.assertEquals(categoryId, responseDto.getId());
-        Assertions.assertEquals("Fiction", responseDto.getName());
+                .andExpect(jsonPath("$.id").value(categoryId))
+                .andExpect(jsonPath("$.name").value("Fiction"));
     }
 
     @Test
@@ -125,19 +114,14 @@ class CategoryControllerTest {
         String requestJson = objectMapper.writeValueAsString(requestDto);
         Long categoryId = 1L;
 
-        MvcResult result = mockMvc.perform(put("/api/categories/" + categoryId)
+        mockMvc.perform(put("/api/categories/" + categoryId)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(jsonPath("$.id").value(categoryId))
+                .andExpect(jsonPath("$.name").value(requestDto.getName()))
+                .andExpect(jsonPath("$.description").value(requestDto.getDescription()));
 
-        CategoryResponseDto responseDto =
-                objectMapper.readValue(result.getResponse().getContentAsString(),
-                        CategoryResponseDto.class);
-
-        Assertions.assertEquals(categoryId, responseDto.getId());
-        Assertions.assertEquals(requestDto.getName(), responseDto.getName());
-        Assertions.assertEquals(requestDto.getDescription(), responseDto.getDescription());
     }
 
     @Test

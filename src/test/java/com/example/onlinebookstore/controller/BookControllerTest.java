@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.onlinebookstore.dto.book.BookDto;
@@ -79,21 +80,16 @@ class BookControllerTest {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getBookById_ValidBookId_ShouldReturnCorrectBook() throws Exception {
         Long bookId = 1L;
-        MvcResult result = mockMvc.perform(get("/api/books/" + bookId))
+        mockMvc.perform(get("/api/books/" + bookId))
                 .andExpect(status().isOk())
-                .andReturn();
-        BookDto actual =
-                objectMapper.readValue(result.getResponse().getContentAsString(), BookDto.class);
-        Assertions.assertEquals(bookId, actual.getId());
-        Assertions.assertEquals("Java", actual.getTitle());
+                .andExpect(jsonPath("$.id").value(bookId))
+                .andExpect(jsonPath("$.title").value("Java"));
 
         bookId = 3L;
-        result = mockMvc.perform(get("/api/books/" + bookId))
+        mockMvc.perform(get("/api/books/" + bookId))
                 .andExpect(status().isOk())
-                .andReturn();
-        actual = objectMapper.readValue(result.getResponse().getContentAsString(), BookDto.class);
-        Assertions.assertEquals(bookId, actual.getId());
-        Assertions.assertEquals("Java for Dummies", actual.getTitle());
+                .andExpect(jsonPath("$.id").value(bookId))
+                .andExpect(jsonPath("$.title").value("Java for Dummies"));
     }
 
     @Test
@@ -106,17 +102,14 @@ class BookControllerTest {
     public void createBook_ValidCreateBookRequest_ShouldReturnValidBookDto() throws Exception {
         CreateBookRequestDto createBookDto = getCreateBookRequestDto();
         String jasonObject = objectMapper.writeValueAsString(createBookDto);
-        MvcResult result = mockMvc.perform(post("/api/books")
+        mockMvc.perform(post("/api/books")
                         .content(jasonObject)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andReturn();
-        BookDto actual =
-                objectMapper.readValue(result.getResponse().getContentAsString(), BookDto.class);
-        Assertions.assertEquals(actual.getId(), 4L);
-        Assertions.assertEquals(createBookDto.getTitle(), actual.getTitle());
-        Assertions.assertEquals(createBookDto.getIsbn(), actual.getIsbn());
-        Assertions.assertEquals(createBookDto.getDescription(), actual.getDescription());
+                .andExpect(jsonPath("$.id").value(4L))
+                .andExpect(jsonPath("$.title").value(createBookDto.getTitle()))
+                .andExpect(jsonPath("$.isbn").value(createBookDto.getIsbn()))
+                .andExpect(jsonPath("$.description").value(createBookDto.getDescription()));
     }
 
     @Test
@@ -130,9 +123,8 @@ class BookControllerTest {
         Long bookId = 1L;
         Assertions.assertTrue(bookRepository.existsById(bookId),
                 "There is no book with id " + bookId + " in DB");
-        MvcResult result = mockMvc.perform(delete("/api/books/" + bookId))
-                .andExpect(status().isOk())
-                .andReturn();
+        mockMvc.perform(delete("/api/books/" + bookId))
+                .andExpect(status().isOk());
         Assertions.assertThrows(ServletException.class,
                 () -> mockMvc.perform(get("/api/books/" + bookId)));
     }
@@ -148,18 +140,15 @@ class BookControllerTest {
         Long bookId = 1L;
         CreateBookRequestDto createBookRequestDto = getCreateBookRequestDto();
         String requestJson = objectMapper.writeValueAsString(createBookRequestDto);
-        MvcResult result = mockMvc.perform(put("/api/books/" + bookId)
+        mockMvc.perform(put("/api/books/" + bookId)
                         .content(requestJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andReturn();
-        BookDto actual =
-                objectMapper.readValue(result.getResponse().getContentAsString(), BookDto.class);
-        Assertions.assertEquals(bookId, actual.getId());
-        Assertions.assertEquals(createBookRequestDto.getTitle(), actual.getTitle());
-        Assertions.assertEquals(createBookRequestDto.getPrice(), actual.getPrice());
-        Assertions.assertEquals(createBookRequestDto.getDescription(), actual.getDescription());
-        Assertions.assertEquals(createBookRequestDto.getIsbn(), actual.getIsbn());
+                .andExpect(jsonPath("$.id").value(bookId))
+                .andExpect(jsonPath("$.title").value(createBookRequestDto.getTitle()))
+                .andExpect(jsonPath("$.price").value(createBookRequestDto.getPrice()))
+                .andExpect(jsonPath("$.description").value(createBookRequestDto.getDescription()))
+                .andExpect(jsonPath("$.isbn").value(createBookRequestDto.getIsbn()));
     }
 
     @Test
@@ -170,22 +159,15 @@ class BookControllerTest {
     @Sql(scripts = "classpath:database/books/clear-books-table.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void searchBooks_ValidSearchRequest_ShouldReturnListOfBookDtos() throws Exception {
-        MvcResult result = mockMvc.perform(get("/api/books/search?titles=Java"))
+        mockMvc.perform(get("/api/books/search?titles=Java"))
                 .andExpect(status().isOk())
-                .andReturn();
-        List<BookDto> bookDtos = List.of(objectMapper.readValue(
-                result.getResponse().getContentAsString(), BookDto[].class));
-        Assertions.assertEquals(1L, bookDtos.get(0).getId());
-        Assertions.assertEquals("java1234", bookDtos.get(0).getIsbn());
+                .andExpect(jsonPath("$.[0].id").value(1L))
+                .andExpect(jsonPath("$.[0].isbn").value("java1234"));
 
-        result = mockMvc.perform(get("/api/books/search?isbns=Head First Java 1234"))
+        mockMvc.perform(get("/api/books/search?isbns=Head First Java 1234"))
                 .andExpect(status().isOk())
-                .andReturn();
-        bookDtos = List.of(objectMapper.readValue(
-                result.getResponse().getContentAsString(), BookDto[].class));
-        bookDtos.forEach(System.out::println);
-        Assertions.assertEquals(2L, bookDtos.get(0).getId());
-        Assertions.assertEquals("Head First Java", bookDtos.get(0).getTitle());
+                .andExpect(jsonPath("$.[0].id").value(2L))
+                .andExpect(jsonPath("$.[0].title").value("Head First Java"));
     }
 
     private CreateBookRequestDto getCreateBookRequestDto() {
