@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
             throw new EntityNotFoundException("There is no order with id " + id);
         }
         Order order = orderOptional.get();
-        order.setStatus(updateDto.getStatus());
+        order.setStatus(Order.Status.valueOf(updateDto.getStatus()));
         return orderMapper.toDto(orderRepository.save(order));
     }
 
@@ -72,6 +72,14 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> getAllOrders(Long userId) {
         List<Order> allOrders = orderRepository.findAllByUserId(userId);
         return allOrders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public List<OrderResponseDto> getAllOrdersByStatus(String statusName) {
+        Order.Status status = Order.Status.valueOf(statusName.toUpperCase());
+        return orderRepository.findAllByStatus(status).stream()
                 .map(orderMapper::toDto)
                 .toList();
     }
