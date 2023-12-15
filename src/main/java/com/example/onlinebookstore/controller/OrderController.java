@@ -9,6 +9,7 @@ import com.example.onlinebookstore.service.OrderItemService;
 import com.example.onlinebookstore.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class OrderController {
     @GetMapping
     @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "View orders", description = "Retrieves user's order history")
-    List<OrderResponseDto> getAllOrders(Authentication authentication) {
+    public List<OrderResponseDto> getAllOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return orderService.getAllOrders(user.getId());
     }
@@ -49,8 +50,8 @@ public class OrderController {
     @PatchMapping(value = "/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Update status", description = "Updates order status")
-    OrderResponseDto updateStatus(@PathVariable Long id,
-                                  @RequestBody OrderUpdateDto updateDto) {
+    public OrderResponseDto updateStatus(@PathVariable Long id,
+                                  @RequestBody @Valid OrderUpdateDto updateDto) {
         return orderService.updateOrderStatus(id, updateDto);
     }
 
@@ -58,7 +59,10 @@ public class OrderController {
     @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "Get order items",
             description = "Retrieves all order items for a specific order")
-    List<OrderItemDto> getAllOrderItems(Authentication authentication, @PathVariable Long orderId) {
+    public List<OrderItemDto> getAllOrderItems(
+            Authentication authentication,
+            @PathVariable Long orderId
+    ) {
         User user = (User) authentication.getPrincipal();
         return orderItemService.getAllOrderItems(user.getId(), orderId);
     }
@@ -67,10 +71,19 @@ public class OrderController {
     @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "Get an order item from order",
             description = "Retrieves a specific order item within an order")
-    OrderItemDto getOrderItemFromOrder(Authentication authentication,
+    public OrderItemDto getOrderItemFromOrder(Authentication authentication,
                                        @PathVariable Long orderId,
                                        @PathVariable Long itemId) {
         User user = (User) authentication.getPrincipal();
         return orderItemService.getOrderItemFromOrder(user.getId(), orderId, itemId);
+    }
+
+    @GetMapping(value = "/status/{status}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Operation(summary = "Get all orders by status",
+            description = "Returns all orders by certain status. "
+                    + "1 - PENDING, 2 - ON_THE_WAY, 3 - DELIVERED")
+    public List<OrderResponseDto> getAllOrdersByStatus(@PathVariable String status) {
+        return orderService.getAllOrdersByStatus(status);
     }
 }

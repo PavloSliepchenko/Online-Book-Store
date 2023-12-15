@@ -8,13 +8,13 @@ databaseChangeLog:
             columns:
               - column:
                   name: email
-                  value: "pavlo@ua.com"
+                  value: "admin@user.com"
               - column:
                   name: password
                   value: "$2a$10$31UQHFaHjd/pYeBiHzFmbeXUGXUTFpt2jRISc9mcR580vUPDzRrDi"
               - column:
                   name: first_name
-                  value: "Pavlo"
+                  value: "Admin"
               - column:
                   name: last_name
-                  value: "Sliepchenko"
+                  value: "User"
