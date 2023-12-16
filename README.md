@@ -71,4 +71,4 @@ To add a new book you will need to be logged in as an admin. You will also need 
 To get orders by status you will need to use get method and endpoint /api/orders/status/{status}. Status has the following states: pending - new orders, on_the_way - orders on the way to the user, delivered - delivered to the customer.
 ![Get orders by status example](https://drive.google.com/uc?export=view&id=1S7-jY_IhoAjqHNG0Hyu-i1Kr881ZXgLB)
 # - Video presentation
-[![Watch the video](https://img.youtube.com/vi/zl2EkqYfN9o/hqdefault.jpg)](https://www.youtube.com/watch?v=zl2EkqYfN9o)
+[![Watch the video](https://img.youtube.com/vi/GrlVlm8mnhs/hqdefault.jpg)](https://www.youtube.com/watch?v=GrlVlm8mnhs)
