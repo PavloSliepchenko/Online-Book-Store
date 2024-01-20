@@ -1,4 +1,4 @@
-# Book Store API
+# 📖 Book Store API 📖
 ## Description
 Current API provides the ability to register, login and buy some books. This API supports CRUD (Create, Read, Update, Delete) operations with entities of the database. Admin user can add books, categories, update order status.
 ## Features
@@ -24,32 +24,32 @@ Current API provides the ability to register, login and buy some books. This API
 - Jackson web token
 ## ENDPOINTS
 ## Available for all users:
-- POST: /api/auth/register 
-- POST: /api/auth/login
+- POST: /api/auth/register (To register a new user)
+- POST: /api/auth/login (To get JWT tokens)
 ## Available for registered users
-- GET: /api/books
-- GET: /api/books/{id}
-- GET: /api/books/search
-- GET: /api/categories 
-- GET: /api/categories/{id} 
-- GET: /api/categories/{id}/books 
-- GET: /api/orders 
-- POST: /api/orders
-- GET: /api/orders/{orderId}/items
-- GET: /api/orders/{orderId}/items/{itemId}
-- GET: /api/cart 
-- POST: /api/cart 
-- PUT: /api/cart/cart-items/{id} 
-- DELETE: /api/cart/cart-items/{id}
+- GET: /api/books (To get all available books)
+- GET: /api/books/{id} (To find book by id)
+- GET: /api/books/search (To get books with certain parameters)
+- GET: /api/categories (To get all categories)
+- GET: /api/categories/{id} (To find category by id)
+- GET: /api/categories/{id}/books (To get books by category id)
+- GET: /api/orders (To view orders)
+- POST: /api/orders (To place an order)
+- GET: /api/orders/{orderId}/items (To get order items)
+- GET: /api/orders/{orderId}/items/{itemId} (To get an order item by id)
+- GET: /api/cart (To get a cart)
+- POST: /api/cart (To add a book to the cart)
+- PUT: /api/cart/cart-items/{id} (To update an order)
+- DELETE: /api/cart/cart-items/{id} (To delete an order)
 ## Available for admin users
-- POST: /api/books
-- DELETE: /api/books/{id}
-- PUT: /api/books/{id}
-- POST: /api/categories
-- PUT: /api/categories/{id}
-- DELETE: /api/categories/{id}
-- PATCH: /api/orders/{id}
-- GET: /api/orders/status/{status}
+- POST: /api/books (To saves a new book to DB)
+- DELETE: /api/books/{id} (To remove a book by id)
+- PUT: /api/books/{id} (To update a certain book)
+- POST: /api/categories (To add a new category)
+- PUT: /api/categories/{id} (To update a category)
+- DELETE: /api/categories/{id} (To delete a category)
+- PATCH: /api/orders/{id} (To updates order status)
+- GET: /api/orders/status/{status} (To get all orders by status)
 ## Important notice
 Please note that endpoints with POST, PUT and PATCH methods require JSON body as an argument.
 ## API using steps
